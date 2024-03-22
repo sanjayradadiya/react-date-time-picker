@@ -1,0 +1,14 @@
+.mainContainer {
+  height: 250px;
+  overflow: hidden;
+  background-color: #fff;
+  z-index: 9999;
+  position: absolute;
+  top: 40px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  justify-content: space-between;
+  box-shadow: 1px 8px 12px 4px rgba(0, 0, 0, 0.16);
+  user-select: none;
+}
