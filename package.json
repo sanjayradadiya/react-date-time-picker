@@ -1,7 +1,7 @@
 {
   "name": "pickers-inputs",
   "version": "1.0.1",
-  "description": "pickers",
+  "description": "React component library for handling date, time, and dateTime pickers with zone handling and customizable formats.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types.d.ts",
@@ -13,6 +13,21 @@
   },
   "author": "Team Unibrains",
   "license": "MIT",
+  "keywords": [
+    "react",
+    "picker",
+    "date-picker",
+    "time-picker",
+    "datetime-picker",
+    "date",
+    "time",
+    "date-time",
+    "dateTime",
+    "zone",
+    "customizable",
+    "format",
+    "input"
+  ],
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
