@@ -5,7 +5,7 @@ interface PickersProps {
     onChange?: (data: string) => void;
     value: string;
     format?: string;
-    show: boolean;
+    show?: boolean;
 }
 interface InputPickerProps extends Omit<PickersProps, "show"> {
     type: PickerType;
@@ -15,4 +15,10 @@ interface InputPickerProps extends Omit<PickersProps, "show"> {
 
 declare const InputPicker: FC<InputPickerProps>;
 
-export { InputPicker, type InputPickerProps, type PickerType, type PickersProps };
+declare const DatePicker: FC<PickersProps>;
+
+declare const TimePicker: FC<PickersProps>;
+
+declare const DateTimePicker: FC<PickersProps>;
+
+export { DatePicker, DateTimePicker, InputPicker, type InputPickerProps, type PickerType, type PickersProps, TimePicker };

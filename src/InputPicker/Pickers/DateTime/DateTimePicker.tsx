@@ -68,27 +68,19 @@ const DateTimePicker: FC<PickersProps> = ({
   );
 
   return (
-    <>
+    <div style={{ display: "flex" }}>
       <DatePicker
         value={dateTime.date}
         onChange={(date) => handleChange(date, "date")}
         format="yyyy-LL-dd"
         show={show}
       />
-      <div
-        style={{
-          height: "100%",
-          width: "1px",
-          backgroundColor: colors.grayFour,
-          margin: "0px 20px",
-        }}
-      />
       <TimePicker
         value={dateTime.time}
         onChange={(time) => handleChange(time, "time")}
         show={show}
       />
-    </>
+    </div>
   );
 };
 

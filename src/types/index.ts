@@ -4,7 +4,7 @@ export interface PickersProps {
   onChange?: (data: string) => void;
   value: string;
   format?: string;
-  show: boolean;
+  show?: boolean;
 }
 
 export interface InputPickerProps extends Omit<PickersProps, "show"> {

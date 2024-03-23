@@ -45,12 +45,14 @@ const InputPicker: FC<InputPickerProps> = ({
         <Icon />
       </span>
       <Wrapper show={show} setShow={onHidePicker} parentRef={parentRef}>
-        <Pickers
-          value={value}
-          onChange={onChange}
-          format={format}
-          show={show}
-        />
+        {show && (
+          <Pickers
+            value={value}
+            onChange={onChange}
+            format={format}
+            show={show}
+          />
+        )}
       </Wrapper>
     </>
   );

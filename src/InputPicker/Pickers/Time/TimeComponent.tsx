@@ -4,7 +4,6 @@ import "../../../styles/time-components.css";
 
 interface Props {
   value: Time;
-  show: boolean;
   scroll: number;
   onChange: (key: keyof Time, value: string) => void;
 }
@@ -16,7 +15,7 @@ const Headers: Record<keyof Time, string> = {
   a: "A/P",
   zone: "Zone",
 };
-const TimeComponent: FC<Props> = ({ value, onChange, show, scroll }) => {
+const TimeComponent: FC<Props> = ({ value, onChange, scroll }) => {
   useEffect(() => {
     handleScroll();
   }, [scroll]);
@@ -34,7 +33,7 @@ const TimeComponent: FC<Props> = ({ value, onChange, show, scroll }) => {
       const parent = document.getElementById(key);
       if (childElement && parent) {
         parent.scrollTo({
-          top: childElement.offsetTop - 56 ,
+          top: childElement.offsetTop - 65,
         });
       }
     });
@@ -61,9 +60,6 @@ const TimeComponent: FC<Props> = ({ value, onChange, show, scroll }) => {
     { dataArray: meridiemArray, key: "a" },
   ];
 
-  if (!show) {
-    return <></>;
-  }
   return (
     <>
       <div className={`main-container`}>
@@ -76,6 +72,7 @@ const TimeComponent: FC<Props> = ({ value, onChange, show, scroll }) => {
                 alignItems: "center",
                 margin: "0px 3px",
               }}
+              key={Headers[key]}
             >
               <p
                 className="header"
@@ -88,7 +85,7 @@ const TimeComponent: FC<Props> = ({ value, onChange, show, scroll }) => {
                   return (
                     <p
                       id={`${key}${item}`}
-                      key={item}
+                      key={`${key}${item}`}
                       onClick={() => onChange(key, item)}
                       className={`digitBox ${
                         item === value[key] && "selected"

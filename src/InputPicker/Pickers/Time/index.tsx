@@ -9,6 +9,7 @@ import { DateTime, Settings } from "luxon";
 import { TimeFormat } from "../../util";
 import TimeComponent from "./TimeComponent";
 import { PickersProps } from "../../../types";
+import PickerBox from "../PickerBox/PickerBox";
 export interface Time {
   hh: string;
   mm: string;
@@ -82,12 +83,9 @@ const TimePicker: FC<PickersProps> = ({ value, onChange, format, show }) => {
   );
 
   return (
-    <TimeComponent
-      value={time}
-      onChange={handleTime}
-      show={show}
-      scroll={scroll}
-    />
+    <PickerBox>
+      <TimeComponent value={time} onChange={handleTime} scroll={scroll} />
+    </PickerBox>
   );
 };
 

@@ -5,6 +5,7 @@ import { Value } from "react-calendar/dist/cjs/shared/types";
 import '../../../styles/react-calendar.css';
 import { DateFormat } from "../../util";
 import { PickersProps } from "../../../types";
+import PickerBox from "../PickerBox/PickerBox";
 
 const DatePicker: FC<PickersProps> = ({ onChange, value, format, show }) => {
   const [date, setDate] = useState<string | null>();
@@ -38,7 +39,13 @@ const DatePicker: FC<PickersProps> = ({ onChange, value, format, show }) => {
     },
     [onChange, format]
   );
-  return <>{show && <Calendar onChange={handleOnChange} value={date} />}</>;
+  return (
+    <>
+      <PickerBox>
+        <Calendar onChange={handleOnChange} value={date} />
+      </PickerBox>
+    </>
+  );
 };
 
 export default DatePicker;
