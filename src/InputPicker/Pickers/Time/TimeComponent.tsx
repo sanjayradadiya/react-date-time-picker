@@ -1,4 +1,10 @@
-import React, { FC, useCallback, useEffect, useMemo } from "react";
+import React, {
+  CSSProperties,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { Time } from ".";
 import "../../../styles/time-components.css";
 
@@ -6,6 +12,7 @@ interface Props {
   value: Time;
   scroll: number;
   onChange: (key: keyof Time, value: string) => void;
+  selectedTimeStyle?: CSSProperties;
 }
 
 const Headers: Record<keyof Time, string> = {
@@ -15,7 +22,12 @@ const Headers: Record<keyof Time, string> = {
   a: "A/P",
   zone: "Zone",
 };
-const TimeComponent: FC<Props> = ({ value, onChange, scroll }) => {
+const TimeComponent: FC<Props> = ({
+  value,
+  onChange,
+  scroll,
+  selectedTimeStyle,
+}) => {
   useEffect(() => {
     handleScroll();
   }, [scroll]);
@@ -60,44 +72,54 @@ const TimeComponent: FC<Props> = ({ value, onChange, scroll }) => {
     { dataArray: meridiemArray, key: "a" },
   ];
 
+  const selectedStyle = useCallback(
+    (isSelected: boolean): CSSProperties =>
+      isSelected
+        ? {
+            backgroundColor: isSelected ? "#1f518f" : "",
+            color: isSelected ? "#ffffff" : "",
+            fontWeight: 500,
+            ...selectedTimeStyle,
+          }
+        : {},
+    [selectedTimeStyle]
+  );
+
   return (
     <>
       <div className={`main-container`}>
         {timeComponents.map(({ dataArray, key }) => (
-          <>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              margin: "0px 3px",
+            }}
+            key={Headers[key]}
+          >
             <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                margin: "0px 3px",
-              }}
-              key={Headers[key]}
+              className="header"
+              style={{ width: "100%", justifyContent: "center" }}
             >
-              <p
-                className="header"
-                style={{ width: "100%", textAlign: "center" }}
-              >
-                {Headers[key]}
-              </p>
-              <div className="wrapper" key={key} id={key}>
-                {dataArray.map((item) => {
-                  return (
-                    <p
-                      id={`${key}${item}`}
-                      key={`${key}${item}`}
-                      onClick={() => onChange(key, item)}
-                      className={`digitBox ${
-                        item === value[key] && "selected"
-                      }`}
-                    >
-                      {item}
-                    </p>
-                  );
-                })}
-              </div>
+              <span>{Headers[key]}</span>
             </div>
-          </>
+            <div className="wrapper" key={key} id={key}>
+              {dataArray.map((item) => {
+                return (
+                  <p
+                    id={`${key}${item}`}
+                    key={`${key}${item}`}
+                    onClick={() => onChange(key, item)}
+                    className={`digitBox`}
+                    style={{ ...selectedStyle(item === value[key]) }}
+                  >
+                    {item}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </div>
     </>

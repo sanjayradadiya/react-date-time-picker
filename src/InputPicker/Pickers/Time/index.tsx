@@ -8,7 +8,7 @@ import React, {
 import { DateTime, Settings } from "luxon";
 import { TimeFormat } from "../../util";
 import TimeComponent from "./TimeComponent";
-import { PickersProps } from "../../../types";
+import { TimeComponentProps } from "../../../types";
 import PickerBox from "../PickerBox/PickerBox";
 export interface Time {
   hh: string;
@@ -18,7 +18,15 @@ export interface Time {
   zone?: string;
 }
 
-const TimePicker: FC<PickersProps> = ({ value, onChange, format, show }) => {
+const TimePicker: FC<TimeComponentProps> = ({
+  value,
+  onChange,
+  format,
+  show,
+  mainContainerClassName,
+  mainContainerStyles,
+  selectedTimeStyle,
+}) => {
   const [time, setTime] = useState<Time>({
     hh: "01",
     mm: "00",
@@ -72,8 +80,18 @@ const TimePicker: FC<PickersProps> = ({ value, onChange, format, show }) => {
     (key: keyof Time, value: string) => {
       setTime((prev) => {
         const prevClone = { ...prev, [key]: value };
-        const formateTime = `${prevClone.hh}:${prevClone.mm}:${prevClone.ss} ${prevClone.a} ${prevClone.zone}`;
-        const dateTimeObj = DateTime.fromFormat(formateTime, TimeFormat);
+        const { mm, hh, ss, zone, a } = prevClone;
+        const hours = DateTime.fromFormat(`${hh} ${a}`, "hh a").hour;
+
+        const formattedTime = DateTime.fromObject(
+          {
+            minute: parseInt(mm),
+            second: parseInt(ss),
+            hour: hours,
+          },
+          { zone }
+        ).toFormat(format || TimeFormat);
+        const dateTimeObj = DateTime.fromFormat(formattedTime, TimeFormat);
         const outputFormateTime = dateTimeObj.toFormat(format || TimeFormat);
         onChange?.(outputFormateTime);
         return prevClone;
@@ -83,8 +101,16 @@ const TimePicker: FC<PickersProps> = ({ value, onChange, format, show }) => {
   );
 
   return (
-    <PickerBox>
-      <TimeComponent value={time} onChange={handleTime} scroll={scroll} />
+    <PickerBox
+      mainContainerClassName={mainContainerClassName}
+      mainContainerStyles={mainContainerStyles}
+    >
+      <TimeComponent
+        value={time}
+        onChange={handleTime}
+        scroll={scroll}
+        selectedTimeStyle={selectedTimeStyle}
+      />
     </PickerBox>
   );
 };

@@ -3,7 +3,6 @@ import TimePicker from "../Time";
 import { DateTime, Settings } from "luxon";
 import DatePicker from "../Date/DatePicker";
 import { DateFormat, DateTimeFormat, TimeFormat } from "../../util";
-import colors from "../../../styles/colors";
 import { PickersProps } from "../../../types";
 
 interface state {
@@ -72,7 +71,6 @@ const DateTimePicker: FC<PickersProps> = ({
       <DatePicker
         value={dateTime.date}
         onChange={(date) => handleChange(date, "date")}
-        format="yyyy-LL-dd"
         show={show}
       />
       <TimePicker

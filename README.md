@@ -40,23 +40,26 @@ Add `InputPicker` like this:
 
 ### InputPickerProps
 
-| Prop     | Type                   | Description                                                                                |
-| -------- | ---------------------- | ------------------------------------------------------------------------------------------ |
-| type     | PickerType             | Type of picker ("date", "time", "dateTime").                                               |
-| value    | string                 | Value of the picker.                                                                       |
-| onChange | (data: string) => void | Callback function triggered when the value changes. Receives the new value as an argument. |
-| format   | string                 | Format of the displayed value. Input and output format will be the same.                   |
-| onHide   | () => void             | Callback function triggered when the picker is hidden.                                     |
-| onShow   | () => void             | Callback function triggered when the picker is shown.                                      |
+| Prop                   | Type                   | Description                                                                                |
+| ---------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
+| type                   | PickerType             | Type of picker ("date", "time", "dateTime").                                               |
+| value                  | string                 | Value of the picker.                                                                       |
+| onChange               | (data: string) => void | Callback function triggered when the value changes. Receives the new value as an argument. |
+| format                 | string                 | Format of the displayed value. Input and output format will be the same.                   |
+| onHide                 | () => void             | Callback function triggered when the picker is hidden.                                     |
+| onShow                 | () => void             | Callback function triggered when the picker is shown.                                      |
+| mainContainerClassName | string                 | Custom class name for the main container component.                                        |
+| mainContainerStyles    | CSSProperties          | Inline styles for the main container component.                                            |
+| className              | string                 | Custom class name for the picker component.                                                |
 
 ## Date Picker
 
-![Date Picker](./assets/date.png)
+![Date Picker](https://firebasestorage.googleapis.com/v0/b/team-unibrains.appspot.com/o/date.png?alt=media)
 
 ## Time Picker
 
-![Time Picker](./assets/time.png)
+![Time Picker](https://firebasestorage.googleapis.com/v0/b/team-unibrains.appspot.com/o/time.png?alt=media)
 
 ## Date-Time Picker
 
-![Date-Time Picker](./assets/date-time.png)
+![Date-Time Picker](https://firebasestorage.googleapis.com/v0/b/team-unibrains.appspot.com/o/date-time.png?alt=media)

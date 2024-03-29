@@ -2,11 +2,6 @@
   display: flex;
   justify-content: space-between;
 }
-.selected {
-  background-color: #1f518f;
-  color: #ffffff;
-  font-weight: 500;
-}
 
 .wrapper {
   display: flex;

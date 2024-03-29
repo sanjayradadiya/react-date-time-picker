@@ -1,11 +1,20 @@
-import React, { FC, ReactNode, memo } from "react";
+import React, { FC, memo } from "react";
 import "../../../styles/main-box.css";
-interface Props {
-  children: ReactNode;
-}
+import { PickerBoxProps } from "../../../types";
 
-const PickerBox: FC<Props> = ({ children }) => {
-  return <div className="main-box">{children}</div>;
+const PickerBox: FC<PickerBoxProps> = ({
+  children,
+  mainContainerClassName,
+  mainContainerStyles,
+}) => {
+  return (
+    <div
+      className={`main-box ${mainContainerClassName}`}
+      style={mainContainerStyles}
+    >
+      {children}
+    </div>
+  );
 };
 
 export default memo(PickerBox);

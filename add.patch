@@ -1,0 +1,615 @@
+diff --git a/package.json b/package.json
+index b3d22f4..fe70389 100644
+--- a/package.json
++++ b/package.json
+@@ -8,10 +8,11 @@
+     "@testing-library/user-event": "^13.5.0",
+     "@types/jest": "^27.5.2",
+     "@types/node": "^16.18.91",
+-    "@types/react": "^18.2.67",
+-    "@types/react-dom": "^18.2.22",
+-    "react": "^18.2.0",
+-    "react-dom": "^18.2.0",
++    "@types/react": "18.0.0",
++    "@types/react-dom": "18.0.0",
++    "luxon": "^3.4.4",
++    "react": "18.0.0",
++    "react-dom": "18.0.0",
+     "react-scripts": "5.0.1",
+     "typescript": "^4.9.5",
+     "web-vitals": "^2.1.4"
+@@ -39,5 +40,8 @@
+       "last 1 firefox version",
+       "last 1 safari version"
+     ]
++  },
++  "devDependencies": {
++    "@types/luxon": "3.3.2"
+   }
+-}
++}
+\ No newline at end of file
+diff --git a/src/InputPicker/Pickers/Date/DatePicker.tsx b/src/InputPicker/Pickers/Date/DatePicker.tsx
+new file mode 100644
+index 0000000..40763ba
+--- /dev/null
++++ b/src/InputPicker/Pickers/Date/DatePicker.tsx
+@@ -0,0 +1,61 @@
++import React, { FC, useCallback, useEffect, useState } from "react";
++import { DateTime } from "luxon";
++import { DateFormat } from "../../util";
++import { PickersProps } from "../../../types";
++import PickerBox from "../PickerBox/PickerBox";
++import Calendar from "./Calender";
++
++const DatePicker: FC<PickersProps> = ({ onChange, value, format, show }) => {
++  const [date, setDate] = useState<string | null>();
++
++  useEffect(() => {
++    let initDate = handleFormat();
++    handleSetDate(initDate);
++  }, [show]);
++
++  const handleSetDate = useCallback((dateValue: any) => {
++    const formattedDate = (
++      format && Boolean(format.trim())
++        ? DateTime.fromFormat(dateValue, format)
++        : DateTime.fromISO(dateValue)
++    )
++      .startOf("day")
++      .toISO();
++
++    setDate(formattedDate);
++  }, []);
++
++  const handleOnChange = useCallback(
++    (data: string) => {
++      if (data) {
++        const parsedDate = DateTime.fromISO(
++          new Date(data.toString()).toISOString()
++        ).startOf("day");
++        const formattedDate =
++          format && Boolean(format.trim())
++            ? parsedDate.toFormat(format)
++            : parsedDate.toISODate();
++        handleSetDate(formattedDate);
++        onChange?.(formattedDate!);
++      }
++    },
++    [format, handleSetDate, onChange]
++  );
++
++  const handleFormat = useCallback(() => {
++    if (format && Boolean(format.trim())) {
++      return DateTime.now().toFormat(format);
++    } else {
++      return DateTime.now().toISODate();
++    }
++  }, [format, value]);
++  return (
++    <>
++      <PickerBox>
++        <Calendar onChange={handleOnChange} value={date} />
++      </PickerBox>
++    </>
++  );
++};
++
++export default DatePicker;
+diff --git a/src/InputPicker/Pickers/DateTime/DateTimePicker.tsx b/src/InputPicker/Pickers/DateTime/DateTimePicker.tsx
+new file mode 100644
+index 0000000..6007233
+--- /dev/null
++++ b/src/InputPicker/Pickers/DateTime/DateTimePicker.tsx
+@@ -0,0 +1,87 @@
++import React, { FC, useCallback, useEffect, useState } from "react";
++import TimePicker from "../Time";
++import { DateTime, Settings } from "luxon";
++import DatePicker from "../Date/DatePicker";
++import { DateFormat, DateTimeFormat, TimeFormat } from "../../util";
++import colors from "../../../styles/colors";
++import { PickersProps } from "../../../types";
++
++interface state {
++  date: string;
++  time: string;
++}
++const DateTimePicker: FC<PickersProps> = ({
++  value,
++  onChange,
++  format,
++  show,
++}) => {
++  const [dateTime, setDateTime] = useState<state>({ date: "", time: "" });
++  const [init, setInit] = useState(false);
++  useEffect(() => {
++    if (init && show) {
++      return;
++    }
++    const zone = Settings.defaultZone.name;
++    let datePart = "";
++    let timePart = "";
++    if (value && value.trim() !== "") {
++      const convertedDateTime = DateTime.fromFormat(
++        value,
++        format || DateTimeFormat,
++        {
++          locale: "en-US",
++        }
++      ).setZone(zone);
++      datePart = convertedDateTime.toFormat(DateFormat);
++      timePart = convertedDateTime.toFormat(TimeFormat);
++
++      const outputFormateDateTime = convertedDateTime.toFormat(
++        format || DateTimeFormat
++      );
++      onChange?.(outputFormateDateTime);
++      setInit(true);
++    }
++    setDateTime({ date: datePart, time: timePart });
++  }, [show, value]);
++
++  const handleChange = useCallback(
++    (data: string, key: keyof state) => {
++      let outputFormateDateTime = "";
++      setDateTime((prev) => {
++        const prevDateTime = { ...prev, [key]: data };
++        if (prevDateTime.date === "") {
++          prevDateTime.date = DateTime.now().toFormat(DateFormat);
++        }
++        if (prevDateTime.time === "") {
++          prevDateTime.time = DateTime.now().toFormat(TimeFormat);
++        }
++        outputFormateDateTime = DateTime.fromFormat(
++          `${prevDateTime.date} ${prevDateTime.time}`,
++          DateTimeFormat
++        ).toFormat(format || DateTimeFormat);
++        onChange?.(outputFormateDateTime);
++        return prevDateTime;
++      });
++    },
++    [onChange, format]
++  );
++
++  return (
++    <div style={{ display: "flex" }}>
++      <DatePicker
++        value={dateTime.date}
++        onChange={(date) => handleChange(date, "date")}
++        // format="yyyy-LL-dd"
++        show={show}
++      />
++      <TimePicker
++        value={dateTime.time}
++        onChange={(time) => handleChange(time, "time")}
++        show={show}
++      />
++    </div>
++  );
++};
++
++export default DateTimePicker;
+diff --git a/src/InputPicker/Pickers/PickerBox/PickerBox.tsx b/src/InputPicker/Pickers/PickerBox/PickerBox.tsx
+new file mode 100644
+index 0000000..8daf80a
+--- /dev/null
++++ b/src/InputPicker/Pickers/PickerBox/PickerBox.tsx
+@@ -0,0 +1,20 @@
++import React, { FC, ReactNode, memo } from "react";
++import "../../../styles/main-box.css";
++import { PickerBoxProps } from "src/types";
++
++const PickerBox: FC<PickerBoxProps> = ({
++  children,
++  mainContainerClassName,
++  mainContainerStyles,
++}) => {
++  return (
++    <div
++      className={`main-box ${mainContainerClassName}`}
++      style={mainContainerStyles}
++    >
++      {children}
++    </div>
++  );
++};
++
++export default memo(PickerBox);
+diff --git a/src/InputPicker/Pickers/Time/TimeComponent.tsx b/src/InputPicker/Pickers/Time/TimeComponent.tsx
+new file mode 100644
+index 0000000..828e13b
+--- /dev/null
++++ b/src/InputPicker/Pickers/Time/TimeComponent.tsx
+@@ -0,0 +1,129 @@
++import React, {
++  CSSProperties,
++  FC,
++  useCallback,
++  useEffect,
++  useMemo,
++} from "react";
++import { Time } from ".";
++import "../../../styles/time-components.css";
++
++interface Props {
++  value: Time;
++  scroll: number;
++  onChange: (key: keyof Time, value: string) => void;
++  selectedTimeStyle?: CSSProperties;
++}
++
++const Headers: Record<keyof Time, string> = {
++  hh: "HH",
++  mm: "MM",
++  ss: "SS",
++  a: "A/P",
++  zone: "Zone",
++};
++const TimeComponent: FC<Props> = ({
++  value,
++  onChange,
++  scroll,
++  selectedTimeStyle,
++}) => {
++  useEffect(() => {
++    handleScroll();
++  }, [scroll]);
++
++  // Initial render scroll till selected hh:mm:ss
++  const handleScroll = useCallback(() => {
++    const elements: { [key: string]: HTMLElement | null } = {};
++    Object.keys(value).forEach((key) => {
++      elements[key] = document.getElementById(
++        `${key}${value[key as keyof Time]}`
++      );
++    });
++
++    Object.entries(elements).forEach(([key, childElement]) => {
++      const parent = document.getElementById(key);
++      if (childElement && parent) {
++        parent.scrollTo({
++          top: childElement.offsetTop - 65,
++        });
++      }
++    });
++  }, [value]);
++
++  // Generate two-digit padded strings for hours, minutes, and seconds
++  const { hoursArray, minuteOrSecondArray, meridiemArray } = useMemo(
++    () => ({
++      hoursArray: Array.from({ length: 12 }, (_, index) =>
++        (index + 1).toString().padStart(2, "0")
++      ),
++      minuteOrSecondArray: Array.from({ length: 60 }, (_, index) =>
++        index.toString().padStart(2, "0")
++      ),
++      meridiemArray: ["AM", "PM"],
++    }),
++    []
++  );
++
++  const timeComponents: { dataArray: string[]; key: keyof Time }[] = [
++    { dataArray: hoursArray, key: "hh" },
++    { dataArray: minuteOrSecondArray, key: "mm" },
++    { dataArray: minuteOrSecondArray, key: "ss" },
++    { dataArray: meridiemArray, key: "a" },
++  ];
++
++  const selectedStyle = useCallback(
++    (isSelected: boolean): CSSProperties =>
++      isSelected
++        ? {
++            backgroundColor: isSelected ? "#1f518f" : "",
++            color: isSelected ? "#ffffff" : "",
++            fontWeight: 500,
++            ...selectedTimeStyle,
++          }
++        : {},
++    [selectedTimeStyle]
++  );
++
++  return (
++    <>
++      <div className={`main-container`}>
++        {timeComponents.map(({ dataArray, key }) => (
++          <div
++            style={{
++              display: "flex",
++              flexDirection: "column",
++              alignItems: "center",
++              margin: "0px 3px",
++            }}
++            key={Headers[key]}
++          >
++            <div
++              className="header"
++              style={{ width: "100%", justifyContent: "center" }}
++            >
++              <span>{Headers[key]}</span>
++            </div>
++            <div className="wrapper" key={key} id={key}>
++              {dataArray.map((item) => {
++                return (
++                  <p
++                    id={`${key}${item}`}
++                    key={`${key}${item}`}
++                    onClick={() => onChange(key, item)}
++                    className={`digitBox`}
++                    style={{ ...selectedStyle(item === value[key]) }}
++                  >
++                    {item}
++                  </p>
++                );
++              })}
++            </div>
++          </div>
++        ))}
++      </div>
++    </>
++  );
++};
++
++export default TimeComponent;
+diff --git a/src/InputPicker/Pickers/Time/index.tsx b/src/InputPicker/Pickers/Time/index.tsx
+new file mode 100644
+index 0000000..baa53eb
+--- /dev/null
++++ b/src/InputPicker/Pickers/Time/index.tsx
+@@ -0,0 +1,119 @@
++import React, {
++  FC,
++  useCallback,
++  useEffect,
++  useLayoutEffect,
++  useState,
++} from "react";
++import { DateTime, Settings } from "luxon";
++import { TimeFormat } from "../../util";
++import TimeComponent from "./TimeComponent";
++import { TimeComponentProps } from "../../../types";
++import PickerBox from "../PickerBox/PickerBox";
++export interface Time {
++  hh: string;
++  mm: string;
++  ss: string;
++  a: string;
++  zone?: string;
++}
++
++const TimePicker: FC<TimeComponentProps> = ({
++  value,
++  onChange,
++  format,
++  show,
++  mainContainerClassName,
++  mainContainerStyles,
++  selectedTimeStyle,
++}) => {
++  const [time, setTime] = useState<Time>({
++    hh: "01",
++    mm: "00",
++    ss: "00",
++    a: "AM",
++    zone: "",
++  });
++  const [scroll, setScroll] = useState(0);
++
++  const handleInitialTime = useCallback(() => {
++    const currentTime = DateTime.now().setLocale("en-US");
++    const zone = Settings.defaultZone.name;
++
++    let formattedTime = currentTime;
++
++    if (value && value.trim() !== "") {
++      // Get time according to zone
++      const inputTime = DateTime.fromFormat(`${value}`, format || TimeFormat, {
++        locale: "en-US",
++      });
++
++      // Convert To Time current zone
++      formattedTime = inputTime.setZone(zone);
++    }
++
++    const outputFormateTime = formattedTime.toFormat(format || TimeFormat);
++    const timeObj = {
++      hh: formattedTime.toFormat("hh"),
++      mm: formattedTime.toFormat("mm"),
++      ss: formattedTime.toFormat("ss"),
++      a: formattedTime.toFormat("a"),
++      zone: formattedTime.toFormat("z"),
++    };
++
++    console.log("check timeobj", timeObj);
++    setTime(timeObj);
++    // Show the short form of the zone
++    if (value && value.trim() !== "") {
++      onChange?.(outputFormateTime);
++    }
++
++    // Scrolling when set initial time.
++    setScroll((prev) => prev + 1);
++  }, [format, onChange, value]);
++
++  useLayoutEffect(() => {
++    handleInitialTime();
++  }, [show]);
++
++  useEffect(() => {}, [show]);
++  const handleTime = useCallback(
++    (key: keyof Time, value: string) => {
++      setTime((prev) => {
++        const prevClone = { ...prev, [key]: value };
++        const { mm, hh, ss, zone, a } = prevClone;
++        const hours = DateTime.fromFormat(`${hh} ${a}`, "hh a").hour;
++
++        const formattedTime = DateTime.fromObject(
++          {
++            minute: parseInt(mm),
++            second: parseInt(ss),
++            hour: hours,
++          },
++          { zone }
++        ).toFormat(format || TimeFormat);
++        const dateTimeObj = DateTime.fromFormat(formattedTime, TimeFormat);
++        const outputFormateTime = dateTimeObj.toFormat(format || TimeFormat);
++        onChange?.(outputFormateTime);
++        return prevClone;
++      });
++    },
++    [format, setTime, onChange]
++  );
++
++  return (
++    <PickerBox
++      mainContainerClassName={mainContainerClassName}
++      mainContainerStyles={mainContainerStyles}
++    >
++      <TimeComponent
++        value={time}
++        onChange={handleTime}
++        scroll={scroll}
++        selectedTimeStyle={selectedTimeStyle}
++      />
++    </PickerBox>
++  );
++};
++
++export default TimePicker;
+diff --git a/src/InputPicker/util.ts b/src/InputPicker/util.ts
+new file mode 100644
+index 0000000..746c0fe
+--- /dev/null
++++ b/src/InputPicker/util.ts
+@@ -0,0 +1,3 @@
++export const DateTimeFormat = "yyyy-LL-dd hh:mm:ss a";
++export const DateFormat = "yyyy-LL-dd";
++export const TimeFormat = "hh:mm:ss a";
+diff --git a/src/styles/main-box.css b/src/styles/main-box.css
+new file mode 100644
+index 0000000..e23f7af
+--- /dev/null
++++ b/src/styles/main-box.css
+@@ -0,0 +1,13 @@
++.main-box {
++  height: 270px;
++  overflow: hidden;
++  background-color: #fff;
++  padding: 10px;
++  border-radius: 5px;
++  border: 1px solid rgba(0, 0, 0, 0.18);
++  justify-content: center;
++  user-select: none;
++  box-shadow: 1px 8px 12px 4px rgba(0, 0, 0, 0.16);
++  display: flex;
++  min-width: 275px;
++}
+diff --git a/src/styles/time-components.css b/src/styles/time-components.css
+new file mode 100644
+index 0000000..11c1fce
+--- /dev/null
++++ b/src/styles/time-components.css
+@@ -0,0 +1,40 @@
++.main-container {
++  display: flex;
++  justify-content: space-between;
++}
++
++.wrapper {
++  display: flex;
++  flex-direction: column;
++  min-width: 60px;
++  height: 100%;
++  text-align: center;
++  overflow: auto;
++  scrollbar-width: none;
++}
++
++.wrapper::-webkit-scrollbar {
++  display: none;
++}
++
++.digitBox {
++  padding: 6px 6px;
++  border-radius: 5px;
++  margin: 3px;
++  font-size: 14px;
++  cursor: default;
++}
++
++.digitBox:hover {
++  background-color: #dee6ef;
++  color: #071424;
++}
++
++.header {
++  border-bottom: 1px solid !important;
++  color: #1f518f;
++  font-size: 14px;
++  position: sticky;
++  top: 0;
++  background-color: #ffffff;
++}
+diff --git a/src/types/index.ts b/src/types/index.ts
+new file mode 100644
+index 0000000..b4ca8ca
+--- /dev/null
++++ b/src/types/index.ts
+@@ -0,0 +1,58 @@
++import { CSSProperties, ReactNode } from "react";
++
++// Define the type of picker: date, time, or dateTime
++export type PickerType = "date" | "time" | "dateTime";
++
++// Props shared across different types of pickers
++export interface PickersProps extends PickerBoxStylesProps {
++  // Callback function invoked when the value of the picker changes
++  onChange?: (data: string) => void;
++  // Current value of the picker
++  value: string;
++  /**
++   * Format string to customize the display format of the value.
++   * The format string follows Luxon's formatting syntax.
++   * Input and output formatting will be same.
++   * And value formate must be same as pass formate.
++   * Default formate(date: yyyy-LL-dd (Iso date formate), time: hh:mm:ss a, dateTime: yyyy-LL-dd hh:mm:ss a)
++   * @example "yyyy-LL-dd hh:mm:ss a Z" (for reference to Luxon formatting, You can also handle zone)
++   */
++  format?: string;
++
++  // Boolean flag to control the visibility of the picker
++  show?: boolean;
++  // Custom class name for the picker component
++  className?: string;
++}
++
++/**
++ * Props for customizing the styles of the main container component that contains all the pickers.
++ */
++export interface PickerBoxStylesProps {
++  // Custom class name for the main container component
++  mainContainerClassName?: string;
++  // Inline styles for the main container component
++  mainContainerStyles?: CSSProperties;
++}
++
++// Props for the main container component that holds pickers
++export interface PickerBoxProps extends PickerBoxStylesProps {
++  // Child elements to be rendered within the picker box
++  children: ReactNode;
++}
++
++// Props specific to the TimeComponent picker
++export interface TimeComponentProps extends PickersProps {
++  // Inline styles for the selected time element
++  selectedTimeStyle?: CSSProperties;
++}
++
++// Props specific to the InputPicker picker
++export interface InputPickerProps extends Omit<PickersProps, "show"> {
++  // Type of picker: date, time, or dateTime
++  type: PickerType;
++  // Callback function invoked when the picker is hidden
++  onHide?: () => void;
++  // Callback function invoked when the picker is shown
++  onShow?: () => void;
++}
