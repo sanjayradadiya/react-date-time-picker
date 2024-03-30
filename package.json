@@ -1,6 +1,6 @@
 {
   "name": "pickers-inputs",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "React component library for handling date, time, and dateTime pickers with zone handling and customizable formats.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -10,6 +10,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c --bundleConfigAsCjs",
     "build:tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sanjayradadiya/react-date-time-picker.git"
   },
   "author": "Team Unibrains",
   "license": "MIT",

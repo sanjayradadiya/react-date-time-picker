@@ -15,7 +15,6 @@ interface PickersProps extends PickerBoxStylesProps {
      */
     format?: string;
     show?: boolean;
-    className?: string;
     selectedStyle?: CSSProperties;
 }
 /**

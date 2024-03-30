@@ -91,7 +91,7 @@ const TimePicker: FC<TimePickerProps> = ({
           },
           { zone }
         ).toFormat(format || TimeFormat);
-        const dateTimeObj = DateTime.fromFormat(formattedTime, TimeFormat);
+        const dateTimeObj = DateTime.fromFormat(formattedTime, format || TimeFormat);
         const outputFormateTime = dateTimeObj.toFormat(format || TimeFormat);
         onChange?.(outputFormateTime);
         return prevClone;
