@@ -1,18 +1,26 @@
-import React, { CSSProperties, useCallback, useEffect, useState } from "react";
+import React, {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { DateTime } from "luxon";
-import "../../../styles/calendar.css"; // Corrected spelling of "calendar"
+import "../../../styles/calendar.css";
+import Years from "./Years";
+import { CalendarState } from "../../util";
+import Days from "./Days";
+import Weeks from "./Weeks";
+import Header from "./Header";
 
 interface Props {
-  value: string | undefined | null; // Corrected type to string
+  value: string | undefined | null;
   onChange: (value: string) => void;
-  selectedTimeStyle?: CSSProperties;
+  selectedStyle?: CSSProperties;
 }
 
-const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-const Calendar: React.FC<Props> = ({ value, onChange }) => {
-  // Added onChange to Props destructuring
-  // State to store the selected date
+const Calendar: React.FC<Props> = ({ value, onChange, selectedStyle }) => {
+  const [state, setState] = useState<CalendarState>(CalendarState.DAY);
   const [selectedDate, setSelectedDate] = useState<DateTime>(DateTime.now());
 
   useEffect(() => {
@@ -23,7 +31,6 @@ const Calendar: React.FC<Props> = ({ value, onChange }) => {
     }
   }, [value]);
 
-  // Function to handle date selection
   const handleDateClick = useCallback(
     (day: DateTime) => {
       setSelectedDate(day);
@@ -32,76 +39,61 @@ const Calendar: React.FC<Props> = ({ value, onChange }) => {
     [onChange]
   );
 
-  // Function to generate days of the month
-  const generateDays = useCallback((): JSX.Element[] => {
-    const days: JSX.Element[] = [];
-    const today = DateTime.now();
-    const firstDayOfMonth = selectedDate.startOf("month").startOf("week");
+  const selectedDateStyle = useMemo((): CSSProperties => {
+    return {
+      backgroundColor: "#1f518f",
+      color: "#fff",
+      fontWeight: "bold",
+      ...(selectedStyle && selectedStyle),
+    };
+  }, [selectedStyle]);
 
-    for (let i = 0; i < 42; i++) {
-      const day = firstDayOfMonth.plus({ days: i });
-      const isCurrentMonth = day.month === selectedDate.month;
+  const handleMonthChange = (offset: number) => {
+    setSelectedDate(selectedDate.plus({ months: offset }));
+  };
+  const handleYearChange = (offset: number) => {
+    setSelectedDate(selectedDate.plus({ years: offset }));
+  };
 
-      let className = "day";
-      if (isCurrentMonth && day.hasSame(selectedDate, "day")) {
-        className += " selected";
-      }
-      if (day.hasSame(today, "day")) {
-        className += " today";
-      }
-
-      days.push(
-        <div key={i} className={className} onClick={() => handleDateClick(day)}>
-          {day.day}
-        </div>
-      );
-
-      if (isCurrentMonth && day.day === selectedDate.endOf("month").day) {
-        break;
-      }
-    }
-
-    return days;
-  }, [handleDateClick, selectedDate]);
+  const onChangeYear = useCallback(
+    (year: number) => {
+      setSelectedDate(selectedDate.set({ year }));
+      setState(CalendarState.DAY);
+    },
+    [selectedDate]
+  );
+  const toggleState = useCallback(() => {
+    setState((prev) => {
+      return prev === CalendarState.DAY
+        ? CalendarState.YEAR
+        : CalendarState.DAY;
+    });
+  }, []);
 
   return (
     <div className="calendar">
-      <div className="header">
-        <p
-          onClick={() => setSelectedDate(selectedDate.minus({ months: 1 }))}
-          className="pointer"
-        >
-          &lt;
-        </p>
-        <span>
-          {selectedDate.toLocaleString({ month: "short", year: "numeric" })}
-        </span>
-        <span
-          onClick={() => setSelectedDate(DateTime.now())}
-          className="today pointer"
-        >
-          Today
-        </span>
-        <p
-          onClick={() => setSelectedDate(selectedDate.plus({ months: 1 }))}
-          className="pointer"
-        >
-          &gt;
-        </p>
-      </div>
-      <div className="weekdays">
-        {weekdays.map(
-          (
-            day,
-            index // Added key to weekdays
-          ) => (
-            <div key={index} className="weekday">
-              {day}
-            </div>
-          )
-        )}
-      </div>
-      <div className="days">{generateDays()}</div>
+      {state === CalendarState.DAY && (
+        <>
+          <Header
+            selectedDate={selectedDate}
+            state={state}
+            onChange={handleDateClick}
+            handleMonthChange={handleMonthChange}
+            handleYearChange={handleYearChange}
+            toggleState={toggleState}
+          />
+          <Weeks />
+          <Days
+            selectedDate={selectedDate}
+            onChange={handleDateClick}
+            selectedStyle={selectedDateStyle}
+          />
+        </>
+      )}
+
+      {state === CalendarState.YEAR && (
+        <Years selectedDate={selectedDate} onChange={onChangeYear} />
+      )}
     </div>
   );
 };

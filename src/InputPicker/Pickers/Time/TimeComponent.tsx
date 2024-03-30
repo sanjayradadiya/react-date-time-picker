@@ -72,16 +72,13 @@ const TimeComponent: FC<Props> = ({
     { dataArray: meridiemArray, key: "a" },
   ];
 
-  const selectedStyle = useCallback(
-    (isSelected: boolean): CSSProperties =>
-      isSelected
-        ? {
-            backgroundColor: isSelected ? "#1f518f" : "",
-            color: isSelected ? "#ffffff" : "",
-            fontWeight: 500,
-            ...selectedTimeStyle,
-          }
-        : {},
+  const selectedStyle = useMemo(
+    (): CSSProperties => ({
+      backgroundColor: "#1f518f",
+      color: "#ffffff",
+      fontWeight: 500,
+      ...(selectedTimeStyle && selectedTimeStyle),
+    }),
     [selectedTimeStyle]
   );
 
@@ -106,13 +103,14 @@ const TimeComponent: FC<Props> = ({
             </div>
             <div className="wrapper" key={key} id={key}>
               {dataArray.map((item) => {
+                const isSelected = item === value[key];
                 return (
                   <p
                     id={`${key}${item}`}
                     key={`${key}${item}`}
                     onClick={() => onChange(key, item)}
                     className={`digitBox`}
-                    style={{ ...selectedStyle(item === value[key]) }}
+                    style={isSelected ? selectedStyle : {}}
                   >
                     {item}
                   </p>

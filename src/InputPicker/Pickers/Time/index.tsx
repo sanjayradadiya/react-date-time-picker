@@ -8,7 +8,7 @@ import React, {
 import { DateTime, Settings } from "luxon";
 import { TimeFormat } from "../../util";
 import TimeComponent from "./TimeComponent";
-import { TimeComponentProps } from "../../../types";
+import { TimePickerProps } from "../../../types";
 import PickerBox from "../PickerBox/PickerBox";
 export interface Time {
   hh: string;
@@ -18,14 +18,14 @@ export interface Time {
   zone?: string;
 }
 
-const TimePicker: FC<TimeComponentProps> = ({
+const TimePicker: FC<TimePickerProps> = ({
   value,
   onChange,
   format,
   show,
   mainContainerClassName,
   mainContainerStyles,
-  selectedTimeStyle,
+  selectedStyle,
 }) => {
   const [time, setTime] = useState<Time>({
     hh: "01",
@@ -109,7 +109,7 @@ const TimePicker: FC<TimeComponentProps> = ({
         value={time}
         onChange={handleTime}
         scroll={scroll}
-        selectedTimeStyle={selectedTimeStyle}
+        selectedTimeStyle={selectedStyle}
       />
     </PickerBox>
   );

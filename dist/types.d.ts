@@ -10,11 +10,13 @@ interface PickersProps extends PickerBoxStylesProps {
      * Input and output formatting will be same.
      * And value formate must be same as pass formate.
      * Default formate(date: yyyy-LL-dd (Iso date formate), time: hh:mm:ss a, dateTime: yyyy-LL-dd hh:mm:ss a)
+     * a is AM and PM
      * @example "yyyy-LL-dd hh:mm:ss a Z" (for reference to Luxon formatting, You can also handle zone)
      */
     format?: string;
     show?: boolean;
     className?: string;
+    selectedStyle?: CSSProperties;
 }
 /**
  * Props for customizing the styles of the main container component that contains all the pickers.
@@ -23,8 +25,9 @@ interface PickerBoxStylesProps {
     mainContainerClassName?: string;
     mainContainerStyles?: CSSProperties;
 }
-interface TimeComponentProps extends PickersProps {
-    selectedTimeStyle?: CSSProperties;
+interface DatePickerProps extends PickersProps {
+}
+interface TimePickerProps extends PickersProps {
 }
 interface InputPickerProps extends Omit<PickersProps, "show"> {
     type: PickerType;
@@ -34,9 +37,9 @@ interface InputPickerProps extends Omit<PickersProps, "show"> {
 
 declare const InputPicker: FC<InputPickerProps>;
 
-declare const DatePicker: FC<PickersProps>;
+declare const DatePicker: FC<DatePickerProps>;
 
-declare const TimePicker: FC<TimeComponentProps>;
+declare const TimePicker: FC<TimePickerProps>;
 
 declare const DateTimePicker: FC<PickersProps>;
 

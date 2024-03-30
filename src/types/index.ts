@@ -15,6 +15,7 @@ export interface PickersProps extends PickerBoxStylesProps {
    * Input and output formatting will be same.
    * And value formate must be same as pass formate.
    * Default formate(date: yyyy-LL-dd (Iso date formate), time: hh:mm:ss a, dateTime: yyyy-LL-dd hh:mm:ss a)
+   * a is AM and PM
    * @example "yyyy-LL-dd hh:mm:ss a Z" (for reference to Luxon formatting, You can also handle zone)
    */
   format?: string;
@@ -23,6 +24,9 @@ export interface PickersProps extends PickerBoxStylesProps {
   show?: boolean;
   // Custom class name for the picker component
   className?: string;
+
+  // Styles for the selected.
+  selectedStyle?: CSSProperties;
 }
 
 /**
@@ -41,11 +45,10 @@ export interface PickerBoxProps extends PickerBoxStylesProps {
   children: ReactNode;
 }
 
+export interface DatePickerProps extends PickersProps {}
+
 // Props specific to the TimeComponent picker
-export interface TimeComponentProps extends PickersProps {
-  // Inline styles for the selected time element
-  selectedTimeStyle?: CSSProperties;
-}
+export interface TimePickerProps extends PickersProps {}
 
 // Props specific to the InputPicker picker
 export interface InputPickerProps extends Omit<PickersProps, "show"> {

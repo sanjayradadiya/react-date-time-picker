@@ -68,7 +68,6 @@ const Wrapper: FC<Props> = ({ children, show, setShow, parentRef }) => {
         zIndex: 9999,
         top: `${top}px`,
       };
-      console.log(buttonPosition.height, buttonPosition.top, buttonPosition);
       const outSideWidthToWindow =
         innerWidth - (buttonPosition.left + picker.offsetWidth);
       const shouldMoveToMoreLeft =

@@ -1,10 +1,16 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { DateTime } from "luxon";
-import { PickersProps } from "../../../types";
+import { DatePickerProps } from "../../../types";
 import PickerBox from "../PickerBox/PickerBox";
 import Calendar from "./Calender";
 
-const DatePicker: FC<PickersProps> = ({ onChange, value, format, show }) => {
+const DatePicker: FC<DatePickerProps> = ({
+  onChange,
+  value,
+  format,
+  show,
+  selectedStyle,
+}) => {
   const [date, setDate] = useState<string | null>();
 
   useEffect(() => {
@@ -51,7 +57,11 @@ const DatePicker: FC<PickersProps> = ({ onChange, value, format, show }) => {
   return (
     <>
       <PickerBox>
-        <Calendar onChange={handleOnChange} value={date} />
+        <Calendar
+          onChange={handleOnChange}
+          value={date}
+          selectedStyle={selectedStyle}
+        />
       </PickerBox>
     </>
   );
