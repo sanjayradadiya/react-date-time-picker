@@ -22,9 +22,7 @@ export interface PickersProps extends PickerBoxStylesProps {
 
   // Boolean flag to control the visibility of the picker
   show?: boolean;
-  // Custom class name for the picker component
-  className?: string;
-
+  
   // Styles for the selected.
   selectedStyle?: CSSProperties;
 }

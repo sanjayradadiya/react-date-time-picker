@@ -14,6 +14,8 @@ const InputPicker: FC<InputPickerProps> = ({
   onHide,
   onShow,
   selectedStyle,
+  mainContainerClassName,
+  mainContainerStyles,
 }) => {
   const [show, setShow] = useState(false);
   const parentRef = useRef<HTMLSpanElement>(null);
@@ -53,6 +55,8 @@ const InputPicker: FC<InputPickerProps> = ({
             format={format}
             show={show}
             selectedStyle={selectedStyle}
+            mainContainerClassName={mainContainerClassName}
+            mainContainerStyles={mainContainerStyles}
           />
         )}
       </Wrapper>
