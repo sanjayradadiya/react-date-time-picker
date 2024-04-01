@@ -15,12 +15,7 @@ interface state {
   date: string;
   time: string;
 }
-const DateTimePicker: FC<PickerProps> = ({
-  value,
-  onChange,
-  format,
-  show,
-}) => {
+const DateTimePicker: FC<PickerProps> = ({ value, onChange, format, show }) => {
   const [dateTime, setDateTime] = useState<state>({ date: "", time: "" });
   const [init, setInit] = useState(false);
   useEffect(() => {
@@ -50,23 +45,21 @@ const DateTimePicker: FC<PickerProps> = ({
   const handleChange = useCallback(
     (data: string, key: keyof state) => {
       let outputFormateDateTime = "";
-      setDateTime((prev) => {
-        const prevDateTime = { ...prev, [key]: data };
-        if (prevDateTime.date === "") {
-          prevDateTime.date = DateTime.now().toFormat(DateFormat);
-        }
-        if (prevDateTime.time === "") {
-          prevDateTime.time = DateTime.now().toFormat(TimeFormat);
-        }
-        outputFormateDateTime = DateTime.fromFormat(
-          `${prevDateTime.date} ${prevDateTime.time}`,
-          DateTimeFormat
-        ).toFormat(format || DateTimeFormat);
-        onChange?.(outputFormateDateTime);
-        return prevDateTime;
-      });
+      const prevDateTime = { ...dateTime, [key]: data };
+      if (prevDateTime.date === "") {
+        prevDateTime.date = DateTime.now().toFormat(DateFormat);
+      }
+      if (prevDateTime.time === "") {
+        prevDateTime.time = DateTime.now().toFormat(TimeFormat);
+      }
+      outputFormateDateTime = DateTime.fromFormat(
+        `${prevDateTime.date} ${prevDateTime.time}`,
+        DateTimeFormat
+      ).toFormat(format || DateTimeFormat);
+      onChange?.(outputFormateDateTime);
+      setDateTime(prevDateTime);
     },
-    [onChange, format]
+    [onChange, format, dateTime]
   );
 
   return (

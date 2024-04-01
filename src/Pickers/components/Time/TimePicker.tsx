@@ -71,31 +71,28 @@ const TimePicker: FC<Props> = ({
   }, [format, onChange, value]);
 
   useEffect(() => {
-    console.log("check inint =>", value);
     handleInitialTime();
   }, [show, init]);
 
   const handleTime = useCallback(
     (key: keyof Time, value: string) => {
-      setTime((prev) => {
-        const prevClone = { ...prev, [key]: value };
-        const { mm, hh, ss, zone, a } = prevClone;
-        const hours = DateTime.fromFormat(`${hh} ${a}`, "hh a").hour;
-        const formattedTime = DateTime.fromObject(
-          {
-            minute: parseInt(mm),
-            second: parseInt(ss),
-            hour: hours,
-          },
-          { zone }
-        )
-          .setZone(zone)
-          .toFormat(format || TimeFormat);
-        onChange?.(formattedTime);
-        return prevClone;
-      });
+      const prevClone = { ...time, [key]: value };
+      const { mm, hh, ss, zone, a } = prevClone;
+      const hours = DateTime.fromFormat(`${hh} ${a}`, "hh a").hour;
+      const formattedTime = DateTime.fromObject(
+        {
+          minute: parseInt(mm),
+          second: parseInt(ss),
+          hour: hours,
+        },
+        { zone }
+      )
+        .setZone(zone)
+        .toFormat(format || TimeFormat);
+      onChange?.(formattedTime);
+      setTime(prevClone);
     },
-    [format, setTime, onChange]
+    [format, setTime, onChange, time]
   );
 
   return (
