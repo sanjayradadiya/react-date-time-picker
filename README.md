@@ -1,3 +1,9 @@
+🚧 🚧 🚧
+pickers-inputs is deprecated.
+Due to the lack of maintainers and increased code complexity, pickers-inputs is now deprecated in favor of [react-date-time-picker-tz](https://www.npmjs.com/package/react-date-time-picker-tz).
+
+You can find the old code of pickers-inputs here.
+
 # Pickers-Inputs
 
 React component library for handling date, time, and dateTime pickers with zone handling and customizable formats.
