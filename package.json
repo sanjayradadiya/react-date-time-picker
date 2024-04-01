@@ -5,6 +5,7 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types.d.ts",
+  "deprecated": "This package has been deprecated in favor of [react-date-time-picker-tz](https://www.npmjs.com/package/react-date-time-picker-tz). Please migrate to react-date-time-picker-tz as this package will no longer be maintained.",
   "scripts": {
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
