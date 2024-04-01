@@ -49,10 +49,18 @@ const Calendar: React.FC<Props> = ({ value, onChange, selectedStyle }) => {
   }, [selectedStyle]);
 
   const handleMonthChange = (offset: number) => {
-    setSelectedDate(selectedDate.plus({ months: offset }));
+    setSelectedDate((prev) => {
+      const value = prev.plus({ months: offset });
+      handleDateClick(value);
+      return value;
+    });
   };
   const handleYearChange = (offset: number) => {
-    setSelectedDate(selectedDate.plus({ years: offset }));
+    setSelectedDate((prev) => {
+      const value = prev.plus({ years: offset });
+      handleDateClick(value);
+      return value;
+    });
   };
 
   const onChangeYear = useCallback(

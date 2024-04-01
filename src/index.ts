@@ -1,8 +1,16 @@
-import InputPicker from "./InputPicker";
-import DatePicker from "./InputPicker/Pickers/Date/DatePicker";
-import TimePicker from "./InputPicker/Pickers/Time";
-import DateTimePicker from "./InputPicker/Pickers/DateTime/DateTimePicker";
-import { PickerType, PickersProps, InputPickerProps } from "./types";
+import Pickers from "./Pickers";
+import DatePicker from "./Pickers/components/Date/DatePicker";
+import TimePickerComponent from "./Pickers/components/Time/TimePicker";
+import DateTimePicker from "./Pickers/components/DateTime/DateTimePicker";
+import {
+  PickerType,
+  PickerProps,
+  PickersProps,
+  TimePickerProps,
+} from "./types";
+import { FC } from "react";
 
-export { InputPicker, DatePicker, DateTimePicker, TimePicker };
-export type { PickerType, PickersProps, InputPickerProps };
+export { Pickers as InputPicker, DatePicker, DateTimePicker };
+export type { PickerType, PickerProps, PickersProps as InputPickerProps };
+
+export const TimePicker: FC<TimePickerProps> = TimePickerComponent;

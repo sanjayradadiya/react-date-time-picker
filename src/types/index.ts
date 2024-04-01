@@ -4,7 +4,7 @@ import { CSSProperties, ReactNode } from "react";
 export type PickerType = "date" | "time" | "dateTime";
 
 // Props shared across different types of pickers
-export interface PickersProps extends PickerBoxStylesProps {
+export interface PickerProps extends PickerBoxStylesProps {
   // Callback function invoked when the value of the picker changes
   onChange?: (data: string) => void;
   // Current value of the picker
@@ -22,9 +22,12 @@ export interface PickersProps extends PickerBoxStylesProps {
 
   // Boolean flag to control the visibility of the picker
   show?: boolean;
-  
+
   // Styles for the selected.
   selectedStyle?: CSSProperties;
+
+  //Zone
+  outputZone?: string;
 }
 
 /**
@@ -43,13 +46,13 @@ export interface PickerBoxProps extends PickerBoxStylesProps {
   children: ReactNode;
 }
 
-export interface DatePickerProps extends PickersProps {}
+export interface DatePickerProps extends PickerProps {}
 
 // Props specific to the TimeComponent picker
-export interface TimePickerProps extends PickersProps {}
+export interface TimePickerProps extends PickerProps {}
 
 // Props specific to the InputPicker picker
-export interface InputPickerProps extends Omit<PickersProps, "show"> {
+export interface PickersProps extends Omit<PickerProps, "show"> {
   // Type of picker: date, time, or dateTime
   type: PickerType;
   // Callback function invoked when the picker is hidden

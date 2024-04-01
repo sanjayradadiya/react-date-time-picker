@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { DateTime, Settings } from "luxon";
 import { TimeFormat } from "../../util";
 import TimeComponent from "./TimeComponent";
@@ -18,7 +12,10 @@ export interface Time {
   zone?: string;
 }
 
-const TimePicker: FC<TimePickerProps> = ({
+interface Props extends TimePickerProps {
+  init?: boolean;
+}
+const TimePicker: FC<Props> = ({
   value,
   onChange,
   format,
@@ -26,6 +23,8 @@ const TimePicker: FC<TimePickerProps> = ({
   mainContainerClassName,
   mainContainerStyles,
   selectedStyle,
+  outputZone,
+  init,
 }) => {
   const [time, setTime] = useState<Time>({
     hh: "01",
@@ -38,7 +37,7 @@ const TimePicker: FC<TimePickerProps> = ({
 
   const handleInitialTime = useCallback(() => {
     const currentTime = DateTime.now().setLocale("en-US");
-    const zone = Settings.defaultZone.name;
+    const localZone = Settings.defaultZone.name;
 
     let formattedTime: DateTime<true> | DateTime<false> = currentTime;
 
@@ -49,7 +48,7 @@ const TimePicker: FC<TimePickerProps> = ({
       });
 
       // Convert To Time current zone
-      formattedTime = inputTime.setZone(zone);
+      formattedTime = inputTime.setZone(outputZone || localZone);
     }
 
     const outputFormateTime = formattedTime.toFormat(format || TimeFormat);
@@ -58,7 +57,7 @@ const TimePicker: FC<TimePickerProps> = ({
       mm: formattedTime.toFormat("mm"),
       ss: formattedTime.toFormat("ss"),
       a: formattedTime.toFormat("a"),
-      zone: formattedTime.toFormat("z"),
+      zone: outputZone || formattedTime.toFormat("z"),
     };
 
     setTime(timeObj);
@@ -71,18 +70,17 @@ const TimePicker: FC<TimePickerProps> = ({
     setScroll((prev) => prev + 1);
   }, [format, onChange, value]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    console.log("check inint =>", value);
     handleInitialTime();
-  }, [show]);
+  }, [show, init]);
 
-  useEffect(() => {}, [show]);
   const handleTime = useCallback(
     (key: keyof Time, value: string) => {
       setTime((prev) => {
         const prevClone = { ...prev, [key]: value };
         const { mm, hh, ss, zone, a } = prevClone;
         const hours = DateTime.fromFormat(`${hh} ${a}`, "hh a").hour;
-
         const formattedTime = DateTime.fromObject(
           {
             minute: parseInt(mm),
@@ -90,10 +88,10 @@ const TimePicker: FC<TimePickerProps> = ({
             hour: hours,
           },
           { zone }
-        ).toFormat(format || TimeFormat);
-        const dateTimeObj = DateTime.fromFormat(formattedTime, format || TimeFormat);
-        const outputFormateTime = dateTimeObj.toFormat(format || TimeFormat);
-        onChange?.(outputFormateTime);
+        )
+          .setZone(zone)
+          .toFormat(format || TimeFormat);
+        onChange?.(formattedTime);
         return prevClone;
       });
     },

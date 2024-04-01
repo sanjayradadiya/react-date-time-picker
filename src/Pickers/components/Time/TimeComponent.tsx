@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { Time } from ".";
+import { Time } from "./TimePicker";
 import "../../../styles/time-components.css";
 
 interface Props {

@@ -1,7 +1,7 @@
 import { CSSProperties, FC } from 'react';
 
 type PickerType = "date" | "time" | "dateTime";
-interface PickersProps extends PickerBoxStylesProps {
+interface PickerProps extends PickerBoxStylesProps {
     onChange?: (data: string) => void;
     value: string;
     /**
@@ -16,6 +16,7 @@ interface PickersProps extends PickerBoxStylesProps {
     format?: string;
     show?: boolean;
     selectedStyle?: CSSProperties;
+    outputZone?: string;
 }
 /**
  * Props for customizing the styles of the main container component that contains all the pickers.
@@ -24,22 +25,22 @@ interface PickerBoxStylesProps {
     mainContainerClassName?: string;
     mainContainerStyles?: CSSProperties;
 }
-interface DatePickerProps extends PickersProps {
+interface DatePickerProps extends PickerProps {
 }
-interface TimePickerProps extends PickersProps {
+interface TimePickerProps extends PickerProps {
 }
-interface InputPickerProps extends Omit<PickersProps, "show"> {
+interface PickersProps extends Omit<PickerProps, "show"> {
     type: PickerType;
     onHide?: () => void;
     onShow?: () => void;
 }
 
-declare const InputPicker: FC<InputPickerProps>;
+declare const Pickers: FC<PickersProps>;
 
 declare const DatePicker: FC<DatePickerProps>;
 
+declare const DateTimePicker: FC<PickerProps>;
+
 declare const TimePicker: FC<TimePickerProps>;
 
-declare const DateTimePicker: FC<PickersProps>;
-
-export { DatePicker, DateTimePicker, InputPicker, type InputPickerProps, type PickerType, type PickersProps, TimePicker };
+export { DatePicker, DateTimePicker, Pickers as InputPicker, type PickersProps as InputPickerProps, type PickerProps, type PickerType, TimePicker };

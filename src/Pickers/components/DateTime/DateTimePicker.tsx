@@ -1,15 +1,21 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
-import TimePicker from "../Time";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
+import TimePicker from "../Time/TimePicker";
 import { DateTime, Settings } from "luxon";
 import DatePicker from "../Date/DatePicker";
 import { DateFormat, DateTimeFormat, TimeFormat } from "../../util";
-import { PickersProps } from "../../../types";
+import { PickerProps } from "../../../types";
 
 interface state {
   date: string;
   time: string;
 }
-const DateTimePicker: FC<PickersProps> = ({
+const DateTimePicker: FC<PickerProps> = ({
   value,
   onChange,
   format,
@@ -18,9 +24,6 @@ const DateTimePicker: FC<PickersProps> = ({
   const [dateTime, setDateTime] = useState<state>({ date: "", time: "" });
   const [init, setInit] = useState(false);
   useEffect(() => {
-    if (init && show) {
-      return;
-    }
     const zone = Settings.defaultZone.name;
     let datePart = "";
     let timePart = "";
@@ -42,7 +45,7 @@ const DateTimePicker: FC<PickersProps> = ({
       setInit(true);
     }
     setDateTime({ date: datePart, time: timePart });
-  }, [show, value]);
+  }, [show]);
 
   const handleChange = useCallback(
     (data: string, key: keyof state) => {
@@ -77,6 +80,7 @@ const DateTimePicker: FC<PickersProps> = ({
         value={dateTime.time}
         onChange={(time) => handleChange(time, "time")}
         show={show}
+        init={init}
       />
     </div>
   );

@@ -38,7 +38,7 @@ const Header: FC<Props> = ({
         }}
         onClick={toggleState}
       >
-        {selectedDate.toLocaleString({ month: "short", year: "numeric" })}
+        {selectedDate.setLocale("en-US").toLocaleString({ month: "short", year: "numeric" })}
         {state === CalendarState.DAY ? <DownArrow /> : <UpArrow />}
       </div>
       <span onClick={() => onChange(DateTime.now())} className="today pointer">

@@ -1,12 +1,12 @@
 import React, { FC, useCallback, useRef, useState } from "react";
-import { InputPickerProps } from "../types";
+import { PickersProps } from "../types";
 import Wrapper from "./Wrapper";
-import TimePicker from "./Pickers/Time";
-import DatePicker from "./Pickers/Date/DatePicker";
-import DateTimePicker from "./Pickers/DateTime/DateTimePicker";
+import TimePicker from "./components/Time/TimePicker";
+import DatePicker from "./components/Date/DatePicker";
+import DateTimePicker from "./components/DateTime/DateTimePicker";
 import { Clock, Calendar } from "../icons";
 
-const InputPicker: FC<InputPickerProps> = ({
+const Pickers: FC<PickersProps> = ({
   value,
   onChange,
   format,
@@ -30,7 +30,7 @@ const InputPicker: FC<InputPickerProps> = ({
     setShow(false);
   }, [onHide]);
 
-  const Pickers = {
+  const PickerComponents = {
     date: DatePicker,
     time: TimePicker,
     dateTime: DateTimePicker,
@@ -49,7 +49,7 @@ const InputPicker: FC<InputPickerProps> = ({
       </span>
       <Wrapper show={show} setShow={onHidePicker} parentRef={parentRef}>
         {show && (
-          <Pickers
+          <PickerComponents
             value={value}
             onChange={onChange}
             format={format}
@@ -59,9 +59,9 @@ const InputPicker: FC<InputPickerProps> = ({
             mainContainerStyles={mainContainerStyles}
           />
         )}
-      </Wrapper>
+      </Wrapper> 
     </>
   );
 };
 
-export default InputPicker;
+export default Pickers;

@@ -17,13 +17,7 @@ yarn add pickers-inputs
 Import InputPicker from `pickers-inputs`;
 
 ```javascript
-import { InputPicker } from "pickers-inputs";
-```
-
-Create state which will be used by the `InputPicker`:
-
-```javascript
-const [selectedDate, setSelectedDate] = useState("");
+import { InputPicker, TimePicker } from "pickers-inputs";
 ```
 
 Add `InputPicker` like this:
@@ -38,21 +32,35 @@ Add `InputPicker` like this:
 />
 ```
 
+
+Add `TimePicker` like this:
+
+```javascript
+<TimePicker
+  value={"2024-03-30 04:06:16 PM Asia/Calcutta"}
+  onChange={(v) => {
+    console.log(v);
+  }}
+  format="yyyy-LL-dd hh:mm:ss a z"
+  outputZone="Europe/Moscow"
+/>
+```
+
+
 ### InputPickerProps
 
-| Prop                   | Type                   | Description                                                                                         |
-| ---------------------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
-| type                   | PickerType             | Type of picker ("date", "time", "dateTime").                                                        |
-| value                  | string                 | Value of the picker.                                                                                |
-| onChange               | (data: string) => void | Callback function triggered when the value changes. Receives the new value as an argument.          |
-| format                 | string                 | Format of the displayed value. Input and output format will be the same.                              |
-| onHide                 | () => void             | Callback function triggered when the picker is hidden.                                              |
-| onShow                 | () => void             | Callback function triggered when the picker is shown.                                               |
-| mainContainerClassName | string                 | Custom class name for the main container component.                                                  |
-| mainContainerStyles    | CSSProperties          | Inline styles for the main container component.                                                      |
-| className              | string                 | Custom class name for the picker component.                                                          |
-| selectedStyle          | CSSProperties          | Styles for the selected item.                                                                       |
-
+| Prop                   | Type                       | Description                                                                              |
+| ---------------------- | -------------------------- | ---------------------------------------------------------------------------------------- |
+| type                   | "date", "time", "dateTime" | Select picker type.                                                                      |
+| value                  | string                     | Input value.                                                                             |
+| onChange               | (value: string) => void    | Fuction triggered when the value changes. Receives the new value as an argument.         |
+| format                 | string                     | Format the displayed value.(Input and output format will be the same.)                   |
+| onHide                 | () => void                 | Fuction triggered when the picker is hidden.                                             |
+| onShow                 | () => void                 | Fuction triggered when the picker is shown.                                              |
+| mainContainerClassName | string                     | Class name(s) that will be added along with "main-box" to the main picker <div> element. |
+| mainContainerStyles    | CSSProperties              | Inline styles for the main container element.                                            |
+| selectedStyle          | CSSProperties              | Styles for the selected element.                                                         |
+| outputZone             | string                     | Specifies the output value based on the zone                                             |
 
 ## Date Picker
 
